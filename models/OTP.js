@@ -17,14 +17,21 @@ const otpSchema = new mongoose.Schema({
     }
 });
 
-async function sendVerificationLink(email, body){
+async function sendVerificationLink(email, otp){
     try{
-        
+        const emailBody = `Your verification otp is ${otp}`;
+        const mailResponse = await mailSender(email, 'Verification mail from ScholarConnect', emailBody);
+        console.log('Email sent successfully', mailResponse);
     }
     catch(error){
         console.error(error);
         console.log('Error while sending verification link');
     }
 }
+
+otpSchema.pre('save', async function(next){
+    await sendVerificationLink(this.email, this.otp);
+    next();
+});
 
 module.exports = mongoose.model('OTP', otpSchema);
