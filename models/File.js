@@ -10,6 +10,10 @@ const fileSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    thumbnail: {
+        type: String,
+        required: true
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
@@ -32,6 +36,10 @@ const fileSchema = new mongoose.Schema({
         required: true
     },
     size: {
+        type: Number,
+        required: true
+    },
+    studentsDownloaded: {
         type: Number,
         required: true
     },
