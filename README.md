@@ -4,7 +4,6 @@ The platform allows users to upload, share, and search documents, notes, and stu
 The project includes features like secure authentication, file uploads to Cloudinary, document search by tags, and document thumbnail previews.
 
 🚀 Features
-
 User Profiles: 
 Each student can create a personal profile, list study interests, and add resources they’ve uploaded.
 Document Sharing: 
