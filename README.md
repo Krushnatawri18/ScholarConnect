@@ -8,6 +8,7 @@ The project includes features like secure authentication, file uploads to Cloudi
 
 🚀 Features
 
+
 User Profiles: 
 Each student can create a personal profile, list study interests, and add resources they’ve uploaded.
 
@@ -38,6 +39,7 @@ Admins can manage categories and user access.
 
 🛠️ Tech Stack
 
+
 Frontend: 
 React.js, Tailwind CSS
 
@@ -59,5 +61,7 @@ dotenv for environment variables
 
 🔗 Project Links
 
+
 GitHub Repository: 
 https://github.com/Krushnatawri18/ScholarConnect
+
