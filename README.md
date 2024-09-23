@@ -5,6 +5,7 @@ The platform allows users to upload, share, and search documents, notes, and stu
 
 The project includes features like secure authentication, file uploads to Cloudinary, document search by tags, and document thumbnail previews.
 
+
 🚀 Features
 
 User Profiles: 
@@ -34,7 +35,9 @@ JWT-based authentication system for secure access.
 Admin Control: 
 Admins can manage categories and user access.
 
+
 🛠️ Tech Stack
+
 Frontend: 
 React.js, Tailwind CSS
 
@@ -55,4 +58,6 @@ dotenv for environment variables
 
 
 🔗 Project Links
-GitHub Repository: https://github.com/Krushnatawri18/ScholarConnect
+
+GitHub Repository: 
+https://github.com/Krushnatawri18/ScholarConnect
