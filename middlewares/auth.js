@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
+const User = require('../models/User');
 require('dotenv').config();
 
 exports.auth = async(req, res, next) => {
     try{
-        const token = req.body.token || req.cookies.token || req.header('Authorization').replace('Bearer ','');
+        const token = req.body.token || req.cookies.token || (req.header('Authorization') && req.header('Authorization').startsWith('Bearer ') 
+        ? req.header('Authorization').replace('Bearer ', '') : null);
 
         if(!token){
             return res.status(403).json({
@@ -53,11 +55,12 @@ exports.isStudent = async(req, res, next) => {
 
 exports.isAdmin = async(req, res, next) => {
     try{
-        if(req.user.accountType !== 'Admin'){
+        const userDetails = await User.findOne({email: req.user.email});
+        if(userDetails.accountType !== 'Admin'){
             return res.status(403).json({
                 success: false,
                 message: 'Authorized route for the admin'
-            })
+            });
         }
         next();
     }
