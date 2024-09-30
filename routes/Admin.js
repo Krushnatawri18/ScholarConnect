@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAllUsers, deleteFile, deleteReview, deleteUser } = require('../controllers/Admin');
+const { getAllUsers, deleteReview, deleteUser } = require('../controllers/Admin');
 const {auth, isAdmin} = require('../middlewares/auth');
+const {deleteFile} = require('../controllers/File');
 
 router.get('/getAllUsers', auth, isAdmin, getAllUsers);
 router.delete('/deleteUser', auth, isAdmin, deleteUser);

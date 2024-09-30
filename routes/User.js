@@ -8,7 +8,7 @@ const { sendResetPasswordLink, resetPassword } = require('../controllers/ResetPa
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/sendOtp', sendOtp);
-router.post('/changePassword/', auth, changePassword);
+router.post('/changePassword', auth, changePassword);
 router.post('/reset-password-token', sendResetPasswordLink);
 router.post('/resetPassword', resetPassword);
 

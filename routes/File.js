@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createFile, getUploadedFileDetails, showAllUploadedFiles, updateStudentDownloads } = require('../controllers/File');
+const { createFile, getUploadedFileDetails, showAllUploadedFiles, updateStudentDownloads, deleteFile } = require('../controllers/File');
 
 const {auth, isStudent, isAdmin} = require('../middlewares/auth');
 
@@ -11,6 +11,7 @@ const { createRatings, getAllRatings, getAllRatingsOfFile, getAvgRatings } = req
 router.post('/createFile', auth, isStudent, createFile);
 router.get('/getUploadedFileDetails', getUploadedFileDetails);
 router.get('/getAllUploadedFiles', showAllUploadedFiles);
+router.delete('/deleteFile', auth, deleteFile);
 router.put('/updateStudentDownloads', updateStudentDownloads);
 
 router.post('/createCategory', auth, isAdmin, createCategory);
