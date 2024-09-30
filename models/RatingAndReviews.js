@@ -19,7 +19,7 @@ const ratingAndReviewSchema = new mongoose.Schema({
 		ref: 'File',
 		required: true,
 		index: true,
-	},
+	}, 
 });
 
 module.exports = mongoose.model("RatingAndReviews", ratingAndReviewSchema);

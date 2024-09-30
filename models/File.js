@@ -10,7 +10,7 @@ const fileSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    thumbnail: {
+    thumbnailUrl: {
         type: String,
         required: true
     },
@@ -19,10 +19,10 @@ const fileSchema = new mongoose.Schema({
         ref: 'Category',
         required: true
     },
-    tags: [{
-        type: String,
+    tags: {
+        type: [String],
         required: true
-    }],
+    },
     cloudinaryId: {
         type: String,
         required: true
@@ -41,9 +41,10 @@ const fileSchema = new mongoose.Schema({
     },
     studentsDownloaded: {
         type: Number,
+        default: 0,
         required: true
     },
-    ratingsAndReviews: [{
+    studentReviews: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RatingAndReviews'
     }],
@@ -52,10 +53,6 @@ const fileSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    uploadDate: {
-        type: Date,
-        default: Date.now()
-    }
-});
+}, { timestamps: true });
 
-exports.module = mongoose.model('File', fileSchema);
+module.exports = mongoose.model('File', fileSchema);

@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
-    image: {
-        type: String
-    },
     gender: {
         type: String
     },

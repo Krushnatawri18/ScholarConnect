@@ -11,3 +11,5 @@ const categorySchema = new mongoose.Schema({
         ref: 'File'
     }]
 });
+
+module.exports = new mongoose.model('Category', categorySchema);

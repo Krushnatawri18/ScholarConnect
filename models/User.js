@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    image: {
+        type: String
+    },
     accountType: {
         type: String,
         enum: ['Student', 'Admin'],
@@ -34,7 +37,21 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordExpires: {
         type: Date
-    }
+    },
+    deletionScheduledAt: {
+        type: Date,
+        default: null
+    },
+    uploadedFile: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    }],
+    review: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'RatingAndReviews'
+        }
+    ]
 });
 
 module.exports = mongoose.model('User', userSchema);
