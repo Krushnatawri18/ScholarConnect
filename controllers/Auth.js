@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const Profile = require('../models/Profile');
-const Otp = require('../models/OTP');
+const OTP = require('../models/OTP');
 const jwt = require('jsonwebtoken');
 const otpGenerator = require('otp-generator');
 const mailSender = require('../utils/mailSender');
@@ -9,9 +9,9 @@ require('dotenv').config();
 
 exports.signup = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, confirmPassword, otp, contactNumber } = req.body;
+        const { firstName, lastName, email, password, confirmPassword, otp, contactNumber, accountType } = req.body;
 
-        if (!firstName || !lastName || !email || !password || !confirmPassword || !otp || !contactNumber) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !otp || !contactNumber || !accountType) {
             return res.status(403).json({
                 success: false,
                 message: 'Provide all the details'
@@ -22,6 +22,13 @@ exports.signup = async (req, res) => {
             return res.status(403).json({
                 success: false,
                 message: 'Password is incorrect'
+            });
+        }
+
+        if(contactNumber.length > 10 || contactNumber.length < 10){
+            return res.status(403).json({
+                success: false,
+                message: 'Provide valid number'
             });
         }
 
@@ -43,7 +50,7 @@ exports.signup = async (req, res) => {
             });
         }
 
-        if (otp !== response[0].otp) {
+        if (otp !== response.otp) {
             return res.status(403).json({
                 success: false,
                 message: 'OTP not match'
@@ -130,7 +137,7 @@ exports.login = async (req, res) => {
                 httpOnly: true
             };
 
-            res.cookie('Token', token, options).status.json({
+            res.cookie('Token', token, options).status(200).json({
                 success: true,
                 message: 'User loggedin successfully',
                 user,
@@ -145,7 +152,8 @@ exports.login = async (req, res) => {
         }
     }
     catch (error) {
-        return res.statu(504).json({
+        console.log(error);
+        return res.status(504).json({
             success: false,
             message: 'Error in login the user'
         });
@@ -163,11 +171,11 @@ exports.sendOtp = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ emai: email });
-        if (!user) {
+        const user = await User.findOne({ email: email });
+        if (user) {
             return res.status(403).json({
                 success: false,
-                message: 'Not a registered user'
+                message: 'Already registered user'
             });
         }
 
@@ -180,17 +188,18 @@ exports.sendOtp = async (req, res) => {
                 lowerCaseAlphabets: false,
                 specialChars: false
             });
-            const result = await Otp.findOne({ otp: otp });
+            const result = await OTP.findOne({ otp: otp });
             isUnique = !result;
         } while (!isUnique);
 
         const otpPayload = { email, otp };
-        const newOtp = await Otp.create(otpPayload);
+        const newOtp = await OTP.create(otpPayload);
+        await newOtp.save();
 
         return res.status(200).json({
             success: true,
             message: 'OTP sent successfully',
-            OTP: otp,
+            otp: otp,
             newOtp
         });
     }
@@ -210,6 +219,13 @@ exports.changePassword = async (req, res) => {
             return res.status(403).json({
                 success: false,
                 message: 'Provide all the details'
+            });
+        }
+
+        if(oldPassword === newPassword){
+            return res.status(403).json({
+                success: false,
+                message: 'Same password'
             });
         }
 

@@ -2,12 +2,41 @@ const User = require('../models/User');
 const File = require('../models/File'); 
 const Profile = require('../models/Profile');
 const RatingAndReviews = require('../models/RatingAndReviews');
-const Profile = require('../models/Profile');
 const cloudinary = require('cloudinary').v2;
 var cron = require('node-cron');
 const mailSender = require('../utils/mailSender');
 const mediaUpload = require('../utils/mediaUpload');
 require('dotenv').config();
+
+exports.showProfile = async(req, res) => {
+    try{
+        const id = req.user.id;
+
+        if(!id){
+            return res.status(403).json({
+                success: false,
+                message: 'No id found'
+            });
+        }
+
+        const user = await User.findById(id);
+
+        const profile = await Profile.findById({_id: user.additionalDetails});
+
+        return res.status(200).json({
+            success: true,
+            message: 'Profile fetched successfully',
+            Profile: profile
+        });
+    }
+    catch(error){
+        console.log(error);
+        return res.status(504).json({
+            success: false,
+            message: 'Error in fetching a profile'
+        });
+    }
+}
 
 exports.updateProfile = async (req, res) => {
     try {
@@ -33,9 +62,9 @@ exports.updateProfile = async (req, res) => {
         const profileDetails = await Profile.findById(profileId);
 
         profileDetails.contactNumber = contactNumber,
-            profileDetails.gender = gender,
-            profileDetails.dateOfBirth = dateOfBirth,
-            profileDetails.about = about;
+        profileDetails.gender = gender,
+        profileDetails.dateOfBirth = dateOfBirth,
+        profileDetails.about = about;
 
         await profileDetails.save();
 
@@ -69,15 +98,15 @@ exports.updateDp = async(req, res) => {
         const response = await mediaUpload(image, process.env.FOLDER_NAME);
         console.log(response.secure_url);
 
-        const updatedUser = await User.findByIdAndUpdate({_id: id}, {
-            $push: {
-                image: response.secure_url
-            }
+        const updatedUser = await User.findByIdAndUpdate({_id: id}, 
+        {
+            image: response.secure_url
         }, {new: true});
 
         return res.status(200).json({
             success: true,
-            message: 'Image updated successfully'
+            message: 'Image updated successfully',
+            user: updatedUser
         });
     }
     catch(error){

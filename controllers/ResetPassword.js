@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const mailSender = require('../utils/mailSender'); 
 
 exports.sendResetPasswordLink = async (req, res) => {
@@ -29,10 +30,12 @@ exports.sendResetPasswordLink = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Reset password link sent successfully'
+            message: 'Reset password link sent successfully',
+            token: token
         });
     }
     catch (error) {
+        console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in sending reset password link'
@@ -66,7 +69,7 @@ exports.resetPassword = async (req, res) => {
             });
         }
 
-        if (user.resetPasswordExpires < Date.now()) {
+        if (!(user.resetPasswordExpires > Date.now())) {
             return res.status(403).json({
                 success: false,
                 message: 'Token is expired'
@@ -84,10 +87,9 @@ exports.resetPassword = async (req, res) => {
             });
         }
 
-        const updatedUser = await User.findOneAndUpdate({ token: token }, {
-            $push: {
-                password: hashedPassword
-            }
+        const updatedUser = await User.findOneAndUpdate({ token: token }, 
+        {
+            password: hashedPassword
         }, { new: true });
 
         return res.status(200).json({
@@ -97,6 +99,7 @@ exports.resetPassword = async (req, res) => {
         });
     }
     catch (error) {
+        console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in resetting a password'

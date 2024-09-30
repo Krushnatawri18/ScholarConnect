@@ -80,64 +80,6 @@ exports.deleteUser = async(req, res) => {
     }
 }
 
-exports.deleteFile = async(req, res) => {
-    try{
-        const {fileId} = req.body;
-        if(!fileId){
-            return res.status(403).json({
-                success: false,
-                message: 'Provide all the details'
-            });
-        }
-
-        const file = await File.findById({_id: fileId});
-        if(!file){
-            return res.status(403).json({
-                success: false,
-                message: 'File not found'
-            });
-        }
-
-        const cloudinaryResponse = await Cloudinary.uploader.destroy(file.cloudinaryId);
-        console.log(cloudinaryResponse);
-        if(cloudinaryResponse.result !== 'ok'){
-            return res.status(504).json({
-                success: false,
-                message: 'Error in deleting cloudinary file'
-            });
-        }
-
-        const updatedUser = await User.findByIdAndUpdate({_id: file.uploadedBy}, {
-            $pull: {
-                uploadedFile: fileId
-            }
-        }, {new: true});
-
-        await Category.findByIdAndDelete({_id: file.category});
-
-        const associatedReviews = file.studentReviews;
-        if(associatedReviews.length > 0){
-            await RatingAndReviews.deleteMany({_id: {$in: associatedReviews}});
-        }
-
-        file.uploadedBy = null;
-
-        await File.findByIdAndDelete({_id: fileId});
-        
-        return res.status(200).json({
-            success: true,
-            message: 'File deleted successfully',
-            user: updatedUser
-        });
-    }
-    catch(error){
-        return res.status(504).json({
-            success: false,
-            message: 'Error in deleting a file'
-        });
-    }
-}
-
 exports.deleteReview = async(req, res) => {
     try{
         const {reviewId} = req.body;

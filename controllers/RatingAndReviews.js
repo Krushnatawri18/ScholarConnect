@@ -1,5 +1,6 @@
 const RatingAndReviews = require('../models/RatingAndReviews');
 const File = require('../models/File');
+const User = require('../models/User');
 const mongoose = require('mongoose');
 
 exports.createRatings = async (req, res) => {
@@ -46,12 +47,23 @@ exports.createRatings = async (req, res) => {
             }
         }, { new: true });
 
+        const updatedUser = await User.findByIdAndUpdate({_id: id}, {
+            $push: {
+                review: newRatingAndReview._id
+            }
+        }, {new: true});
+        console.log(updatedUser);
+
         return res.status(200).json({
             success: true,
-            message: 'User reviewed successfully'
+            message: 'User reviewed successfully',
+            file: updatedFile,
+            user: updatedUser,
+            ratings: newRatingAndReview
         });
     }
     catch (error) {
+        console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in reviewing a file'
@@ -62,7 +74,7 @@ exports.createRatings = async (req, res) => {
 exports.getAllRatings = async (req, res) => {
     try {
         const allRatings = await RatingAndReviews.find({})
-            .sort('rating', 'desc')
+            .sort({rating: -1})
             .populate({
                 path: 'user',
                 select: 'firstName lastName image'
@@ -77,6 +89,7 @@ exports.getAllRatings = async (req, res) => {
         });
     }
     catch (error) {
+    console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in fetching all ratings'
@@ -103,13 +116,14 @@ exports.getAllRatingsOfFile = async (req, res) => {
             });
         }
 
-        const ratingIds = await file.studentReviews;
+        const ratingIds = file.studentReviews;
+        console.log('Rating IDs:', ratingIds);
         const ratingDetails = await RatingAndReviews.find({
             _id: {
                 $in: ratingIds
             }
         })
-            .sort({ 'rating': 'desc' })
+            .sort({ rating: -1})
             .populate({
                 path: 'user',
                 select: 'firstName lastName image'
@@ -126,6 +140,7 @@ exports.getAllRatingsOfFile = async (req, res) => {
         });
     }
     catch (error) {
+    console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in fetching all ratings of file'
@@ -185,6 +200,7 @@ exports.getAvgRatings = async (req, res) => {
         });
     }
     catch (error) {
+    console.log(error);
         return res.status(504).json({
             success: false,
             message: 'Error in fetching average ratings'

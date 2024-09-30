@@ -49,14 +49,13 @@ exports.updateCategory = async (req, res) => {
         }
 
         const category = await Category.findByIdAndUpdate({ _id: categoryId }, {
-            $push: {
-                name: name
-            }
+            name: name
         }, { new: true });
 
         return res.status(200).json({
             success: true,
-            message: 'Updated category successfully'
+            message: 'Updated category successfully',
+            category: category
         });
     }
     catch (error) {
@@ -100,7 +99,7 @@ exports.deleteCategory = async (req, res) => {
 
 exports.showAllCategories = async (req, res) => {
     try {
-        const categories = await Category.find({}, { name: true });
+        const categories = await Category.find({}, { name: true, files: true });
 
         if (!categories) {
             return res.status(403).json({
@@ -111,7 +110,8 @@ exports.showAllCategories = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'All categories fetched successfully'
+            message: 'All categories fetched successfully',
+            categories: categories
         });
     }
     catch (error) {
